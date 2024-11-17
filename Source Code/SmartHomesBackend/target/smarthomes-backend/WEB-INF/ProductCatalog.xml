@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<products>
+    <product>
+        <name>Smart Doorbell</name>
+        <price>199.99</price>
+        <description>HD video doorbell with night vision</description>
+        <manufacturer>SmartHome</manufacturer>
+        <category>Smart Doorbells</category>
+    </product>
+    <product>
+        <name>Smart Lock</name>
+        <price>149.99</price>
+        <description>Keyless entry smart lock</description>
+        <manufacturer>SecureTech</manufacturer>
+        <category>Smart Doorlocks</category>
+    </product>
+    <!-- Add more products as needed -->
+</products>

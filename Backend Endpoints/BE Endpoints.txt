@@ -1,0 +1,143 @@
+# User Management -- DONE
+- POST /api/users/register - Register a new user
+- POST /api/users/login - User login
+- GET /api/users/:userId - Get user details (Salesman only)
+- PUT /api/users/:userId - Update user details (Salesman only)
+- DELETE /api/users/:userId - Delete user (Salesman only)
+
+# Product Management --DONE
+- GET /api/products - List all products
+- GET /api/products/:productId - Get product details of a particular product
+- POST /api/products - Add a new product (StoreManager only)
+- PUT /api/products/:productId - Update a product (StoreManager only)
+- DELETE /api/products/:productId - Delete a product (StoreManager only)
+- GET /api/products/:productId/accessories - Get accessories for a product
+- GET /api/products/:productId/warranty - Get warranty options for a product
+- GET /api/products/:productId/discounts - Get all discounts and rebates for a product
+
+# Category Management --DONE
+- GET /api/categories - List all product categories
+- GET /api/categories/:categoryId - List a particular product category
+- POST /api/categories - Add a new category (StoreManager only)
+- PUT /api/categories/:categoryId - Update a category (StoreManager only)
+- DELETE /api/categories/:categoryId - Delete a category (StoreManager only)
+
+# Store Management --DONE
+- GET /api/stores - List all store locations
+- GET /api/stores/:storeId - List a particular store location
+- POST /api/stores - Add a new store location (StoreManager only)
+- PUT /api/stores/:storeId - Update store details (StoreManager only)
+- DELETE /api/stores/:storeId - Delete a store location (StoreManager only)
+
+# Discount Management --DONE
+- GET /api/discounts - List all discounts
+- GET /api/discounts/:discountId - List a particular discount
+- POST /api/discounts - Add a new discount (StoreManager only)
+- PUT /api/discounts/:discountId - Update a discount (StoreManager only)
+- DELETE /api/discounts/:discountId - Delete a discount (StoreManager only)
+
+# Warranty Management --DONE
+- GET /api/warranties - List all warranties
+- GET /api/warranties/:warrantyId - Get the warranty with the respective id
+- POST /api/warranties - Add a new warranty (StoreManager only)
+- PUT /api/warranties/:warrantyId - Update a warranty (StoreManager only)
+- DELETE /api/warranties/:warrantyId - Delete a warranty (StoreManager only)
+
+# Accessories Management --DONE
+- GET /api/accessories - List all accessories
+- GET /api/accessories/:accessoryId - Get the accessory with the respective id
+- POST /api/accessories - Add a new accessory (StoreManager only)
+- PUT /api/accessories/:accessoryId - Update an accessory (StoreManager only)
+- DELETE /api/accessories/:accessoryId - Delete an accessory (StoreManager only)
+
+# Review API Endpoints --DONE (MONGODB Implementation)
+1. Create a Review
+   - Method: POST
+   - Path: `/api/reviews`
+
+2. Get All Reviews
+   - Method: GET
+   - Path: `/api/reviews`
+
+3. Get a Specific Review
+   - Method: GET
+   - Path: `/api/reviews/{reviewId}`
+
+4. Update a Review
+   - Method: PUT
+   - Path: `/api/reviews/{reviewId}?userId={userId}`
+   - Query Parameter: `userId`
+
+5. Delete a Review
+   - Method: DELETE
+   - Path: `/api/reviews/{reviewId}?userId={userId}`
+   - Query Parameter: `userId`
+
+
+# Order Management --DONE
+
+- POST /api/orders - Place a new order (all users can order for products) 
+- GET /api/orders - Get all orders of that particular user with that id.(all users can view their own orders) 
+- GET /api/orders/:orderId - Get a particular order of that particular user with that user id.(all users can view order details of their particular order)
+- DELETE /api/orders/:orderId - Cancel an order for a particular user(if within cancellation period)(all user can cancel their orders if its within 15 days of cancellation period)
+
+# Salesman-specific Endpoints --DONE
+- GET /api/allorders - Get all orders (Salesman only)
+- GET /api/allorders/:orderId - Get order details of one of the order (Salesman only)
+- PUT /api/allorders/:orderId - Update a particular order (Salesman only)
+- DELETE /api/allorders/:orderId - Delete an order (Salesman Only no constraints on the cancellation period)
+
+# Customer Address Management  --DONE
+- GET /api/address - Get all addresses for a user(Get all addresses for a particular user each user can access only his address)
+- GET /api/address/:addressId - Get a particular address for a user(Get a particular address for a particular user each user can access only his address)
+- POST /api/address - Add a new address for a user
+- PUT /api/address/:addressId - Update an address
+- DELETE /api/address/:addressId - Delete an address
+
+# Analytics and Trending
+- GET /api/analytics/trending-products - Get top 5 most liked products
+- GET /api/analytics/top-zipcodes - Get top 5 zip codes with maximum products sold
+- GET /api/analytics/best-selling-products - Get top 5 most sold products
+
+# Inventory Management (StoreManager only)
+
+- GET /api/inventory - Get all products with their inventory details (including inventory count, discount, and rebate amounts)
+- GET /api/inventory/inventory-counts - Get inventory counts for all products (returns product id, name, price, and inventory count)
+- GET /api/inventory/on-sale - Get all products currently on sale (returns product id, name, price, discount amount, start date, and end date)
+- GET /api/inventory/with-rebates - Get all products with manufacturer rebates (returns product id, name, price, rebate amount, start date, and end date)
+- POST /api/inventory - Add or increase inventory for a product
+- PUT /api/inventory - Update inventory quantity for a product
+- DELETE /api/inventory/{productId} - Delete inventory for a specific product
+
+# Sales Report (StoreManager only)
+- GET /api/sales-report/product-sales - Get a summary of all products sold with quantities and total sales
+- GET /api/sales-report/daily-sales - Get total daily sales transactions
+
+# Search Auto-Complete
+- GET /api/autocomplete?term={searchTerm} - Get auto-complete suggestions for products
+
+# Customer Service Management --DONE
+- GET /api/customer-service - Get all tickets for the current user
+- GET /api/customer-service/:ticketNumber - Get status of a specific ticket
+- POST /api/customer-service - Create a new customer service ticket
+- GET /api/customer-service?delivered-orders=true - Get list of delivered orders for ticket creation
+
+Request Format for Creating Ticket:
+```
+POST /api/customer-service
+Content-Type: multipart/form-data
+
+Form Data:
+- orderId: [Order ID for delivered order]
+- description: [Description of the issue]
+- image: [Image file of damaged product/packaging]
+```
+
+Response Format for Ticket:
+```json
+{
+    "ticketNumber": "CST-YYYYMMDD-XXXXX",
+    "status": "RESOLVED",
+    "decision": ["REFUND_ORDER" | "REPLACE_ORDER" | "ESCALATE_TO_HUMAN"]
+}
+```
