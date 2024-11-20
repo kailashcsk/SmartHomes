@@ -27,9 +27,9 @@ public class ElasticsearchService {
     private static final String PRODUCTS_INDEX = "products";
     private static final String REVIEWS_INDEX = "reviews";
 
-    private static final String ELASTICSEARCH_HOSTNAME = "https://ae4ae90952784eef84d0f2bc4ddafe4d.us-central1.gcp.cloud.es.io:443";
+    private static final String ELASTICSEARCH_HOSTNAME = "";
     private static final String ELASTICSEARCH_USERNAME = "elastic";
-    private static final String ELASTICSEARCH_PASSWORD = "4RMgGFSbrhs7rVpKqaG1QC6k";
+    private static final String ELASTICSEARCH_PASSWORD = "";
 
     public ElasticsearchService() {
         try {

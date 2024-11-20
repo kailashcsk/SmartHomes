@@ -19,7 +19,7 @@ import java.net.http.HttpResponse;
 
 public class OpenAIService {
     private static final Logger LOGGER = Logger.getLogger(OpenAIService.class.getName());
-    private static final String OPENAI_API_KEY = "sk-DTTki29DbLaLb7w2sg-eRX3tMJcMhfuIchKUff5NiWT3BlbkFJuSL-mTUmw6gpbQPHi9pUS4asg8AH4hoL9JPFjE_mMA";
+    private static final String OPENAI_API_KEY = "Your_OpenAI_API_Key";
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
     private static final String MODEL_NAME = "gpt-4o-mini";
     private static final String OPENAI_EMBEDDING_URL = "https://api.openai.com/v1/embeddings";
