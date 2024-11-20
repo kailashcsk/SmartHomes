@@ -1,6 +1,7 @@
 com/smarthomes/dao/AccessoryDAO.class
 com/smarthomes/util/MySQLDataStoreUtilities.class
 com/smarthomes/dao/OrderDAO.class
+com/smarthomes/models/Review.class
 com/smarthomes/dto/SalesReportDTO$ProductSalesSummary.class
 com/smarthomes/servlets/ProductReviewServlet.class
 com/smarthomes/dto/InventoryReportDTO.class
@@ -19,7 +20,6 @@ com/smarthomes/servlets/OrderServlet.class
 com/smarthomes/models/Warranty.class
 com/smarthomes/models/Discount.class
 com/smarthomes/servlets/LogoutServlet.class
-com/smarthomes/models/CustomerServiceTicket.class
 com/smarthomes/models/Ticket.class
 com/smarthomes/models/Order$OrderItem.class
 com/smarthomes/filters/JwtFilter.class
@@ -27,7 +27,6 @@ com/smarthomes/filters/CorsFilter.class
 com/smarthomes/models/User.class
 com/smarthomes/servlets/SalesmanOrderServlet.class
 com/smarthomes/servlets/StoreServlet.class
-com/smarthomes/util/FileUtil$FileValidationException.class
 com/smarthomes/util/DatabaseConnection.class
 com/smarthomes/dto/InventoryDTO.class
 com/smarthomes/servlets/LoginServlet$LoginResponse.class
@@ -37,6 +36,7 @@ com/smarthomes/dao/TicketDAO$DeliveredOrder.class
 com/smarthomes/test/DatabaseConnectionTest.class
 com/smarthomes/servlets/InventoryReportServlet.class
 com/smarthomes/servlets/RegistrationServlet.class
+com/smarthomes/services/ElasticsearchService.class
 com/smarthomes/dao/SalesmanOrderDAO.class
 com/smarthomes/servlets/SalesReportServlet$ErrorResponse.class
 com/smarthomes/servlets/AnalyticsServlet.class
@@ -57,19 +57,19 @@ com/smarthomes/util/PasswordUtil.class
 com/smarthomes/dao/TicketDAO$OrderItem.class
 com/smarthomes/models/Accessory.class
 com/smarthomes/util/MongoDBDataStoreUtilities.class
+com/smarthomes/dao/ReviewDAO.class
 com/smarthomes/servlets/AutoCompleteServlet.class
 com/smarthomes/servlets/CustomerServiceServlet.class
 com/smarthomes/dao/AddressDAO.class
 com/smarthomes/util/FileUploadUtil$FileInfo.class
-com/smarthomes/util/FileUtil.class
 com/smarthomes/dao/WarrantyDAO.class
 com/smarthomes/servlets/WarrantyServlet.class
 com/smarthomes/dao/InventoryReportDAO.class
+com/smarthomes/servlets/ReviewServlet.class
 com/smarthomes/util/AjaxUtility.class
 com/smarthomes/servlets/DiscountServlet.class
 com/smarthomes/services/OpenAIService.class
 com/smarthomes/servlets/LoginServlet.class
-com/smarthomes/util/OpenAIUtil.class
 com/smarthomes/models/Category.class
 com/smarthomes/dto/SalesReportDTO$DailySalesTransaction.class
 com/smarthomes/servlets/CategoryServlet.class

@@ -50,28 +50,7 @@
 - PUT /api/accessories/:accessoryId - Update an accessory (StoreManager only)
 - DELETE /api/accessories/:accessoryId - Delete an accessory (StoreManager only)
 
-# Review API Endpoints --DONE (MONGODB Implementation)
-1. Create a Review
-   - Method: POST
-   - Path: `/api/reviews`
 
-2. Get All Reviews
-   - Method: GET
-   - Path: `/api/reviews`
-
-3. Get a Specific Review
-   - Method: GET
-   - Path: `/api/reviews/{reviewId}`
-
-4. Update a Review
-   - Method: PUT
-   - Path: `/api/reviews/{reviewId}?userId={userId}`
-   - Query Parameter: `userId`
-
-5. Delete a Review
-   - Method: DELETE
-   - Path: `/api/reviews/{reviewId}?userId={userId}`
-   - Query Parameter: `userId`
 
 
 # Order Management --DONE
@@ -141,3 +120,28 @@ Response Format for Ticket:
     "decision": ["REFUND_ORDER" | "REPLACE_ORDER" | "ESCALATE_TO_HUMAN"]
 }
 ```
+
+
+
+# Review API Endpoints --DONE (MONGODB Implementation)
+1. Create a Review
+   - Method: POST
+   - Path: `/api/reviews`
+
+2. Get All Reviews
+   - Method: GET
+   - Path: `/api/reviews`
+
+3. Get a Specific Review
+   - Method: GET
+   - Path: `/api/reviews/{reviewId}`
+
+4. Update a Review
+   - Method: PUT
+   - Path: `/api/reviews/{reviewId}?userId={userId}`
+   - Query Parameter: `userId`
+
+5. Delete a Review
+   - Method: DELETE
+   - Path: `/api/reviews/{reviewId}?userId={userId}`
+   - Query Parameter: `userId`

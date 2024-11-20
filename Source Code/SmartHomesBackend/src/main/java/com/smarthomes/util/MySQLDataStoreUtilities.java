@@ -1,6 +1,7 @@
 package com.smarthomes.util;
 
 import com.smarthomes.models.Product;
+import com.smarthomes.models.Review;
 import com.smarthomes.models.Store;
 import com.smarthomes.models.Ticket;
 import com.smarthomes.models.User;
@@ -1861,4 +1862,201 @@ public class MySQLDataStoreUtilities {
         return ticket;
     }
 
+    //Review Management Methods
+     // Get all reviews
+    public static List<Review> getAllReviews() throws SQLException {
+        List<Review> reviews = new ArrayList<>();
+        String sql = "SELECT r.*, u.name as user_name FROM reviews r " +
+                    "JOIN users u ON r.user_id = u.id " +
+                    "ORDER BY r.review_date DESC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                reviews.add(mapResultSetToReview(rs));
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error fetching all reviews: " + e.getMessage(), e);
+            throw e;
+        }
+        return reviews;
+    }
+
+    // Get reviews by product ID
+    public static List<Review> getReviewsByProduct(int productId) throws SQLException {
+        List<Review> reviews = new ArrayList<>();
+        String sql = "SELECT r.*, u.name as user_name FROM reviews r " +
+                    "JOIN users u ON r.user_id = u.id " +
+                    "WHERE r.product_id = ? " +
+                    "ORDER BY r.review_date DESC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, productId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    reviews.add(mapResultSetToReview(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error fetching reviews for product " + productId + ": " + e.getMessage(), e);
+            throw e;
+        }
+        return reviews;
+    }
+
+    // Get reviews by user ID
+    public static List<Review> getReviewsByUser(int userId) throws SQLException {
+        List<Review> reviews = new ArrayList<>();
+        String sql = "SELECT r.*, u.name as user_name FROM reviews r " +
+                    "JOIN users u ON r.user_id = u.id " +
+                    "WHERE r.user_id = ? " +
+                    "ORDER BY r.review_date DESC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    reviews.add(mapResultSetToReview(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error fetching reviews for user " + userId + ": " + e.getMessage(), e);
+            throw e;
+        }
+        return reviews;
+    }
+
+    // Get reviews by user ID and product ID
+    public static List<Review> getReviewsByUserAndProduct(int userId, int productId) throws SQLException {
+        List<Review> reviews = new ArrayList<>();
+        String sql = "SELECT r.*, u.name as user_name FROM reviews r " +
+                "JOIN users u ON r.user_id = u.id " +
+                "WHERE r.user_id = ? AND r.product_id = ? " +
+                "ORDER BY r.review_date DESC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, productId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    reviews.add(mapResultSetToReview(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE,
+                    "Error fetching reviews for user " + userId + " and product " + productId + ": " + e.getMessage(),
+                    e);
+            throw e;
+        }
+        return reviews;
+    }
+
+    // Create a new review
+    public static void createReview(Review review) throws SQLException {
+        String sql = "INSERT INTO reviews (product_id, user_id, store_id, review_text, rating, review_date) " +
+                "VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            pstmt.setInt(1, review.getProductId());
+            pstmt.setInt(2, review.getUserId());
+            pstmt.setInt(3, review.getStoreId());
+            pstmt.setString(4, review.getReviewText());
+            pstmt.setInt(5, review.getRating());
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Creating review failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    review.setId(generatedKeys.getInt(1));
+                } else {
+                    throw new SQLException("Creating review failed, no ID obtained.");
+                }
+            }
+        }
+    }
+
+    // Update an existing review
+    public static void updateReview(Review review) throws SQLException {
+        String sql = "UPDATE reviews SET review_text = ?, rating = ?, last_modified = CURRENT_TIMESTAMP " +
+                "WHERE id = ? AND user_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, review.getReviewText());
+            pstmt.setInt(2, review.getRating());
+            pstmt.setInt(3, review.getId());
+            pstmt.setInt(4, review.getUserId());
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Updating review failed, no rows affected.");
+            }
+        }
+    }
+
+    // Delete a review
+    public static void deleteReview(int reviewId, int userId) throws SQLException {
+        // First, get the product ID before deleting the review
+        int productId;
+        String getProductIdSql = "SELECT product_id FROM reviews WHERE id = ? AND user_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(getProductIdSql)) {
+            
+            pstmt.setInt(1, reviewId);
+            pstmt.setInt(2, userId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new SQLException("Review not found or unauthorized deletion.");
+                }
+                productId = rs.getInt("product_id");
+            }
+
+            // Now delete the review
+            String deleteSql = "DELETE FROM reviews WHERE id = ? AND user_id = ?";
+            try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+                deleteStmt.setInt(1, reviewId);
+                deleteStmt.setInt(2, userId);
+
+                int affectedRows = deleteStmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("Deleting review failed, no rows affected.");
+                }
+
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error deleting review: " + e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    // Helper method to map ResultSet to Review object
+    public static Review mapResultSetToReview(ResultSet rs) throws SQLException {
+        Review review = new Review();
+        review.setId(rs.getInt("id"));
+        review.setProductId(rs.getInt("product_id"));
+        review.setUserId(rs.getInt("user_id"));
+        review.setStoreId(rs.getInt("store_id"));
+        review.setReviewText(rs.getString("review_text"));
+        review.setRating(rs.getInt("rating"));
+        review.setReviewDate(rs.getTimestamp("review_date"));
+        review.setLastModified(rs.getTimestamp("last_modified"));
+        review.setUserName(rs.getString("user_name")); // From JOIN with users table
+        return review;
+    }
 }

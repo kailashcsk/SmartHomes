@@ -138,7 +138,7 @@
     </servlet-mapping>
 
 <!-- Reviews Servlet Mapping -->
-<servlet>
+<!-- <servlet>
         <servlet-name>ProductReviewServlet</servlet-name>
         <servlet-class>com.smarthomes.servlets.ProductReviewServlet</servlet-class>
     </servlet>
@@ -146,7 +146,7 @@
     <servlet-mapping>
         <servlet-name>ProductReviewServlet</servlet-name>
         <url-pattern>/api/reviews/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping> -->
 
     <!-- Orders Servlet Mapping -->
     <servlet>
@@ -224,6 +224,17 @@
     <servlet-name>CustomerServiceServlet</servlet-name>
     <url-pattern>/api/customer-service/*</url-pattern>
 </servlet-mapping>
+
+<!-- Review Servlet Mapping -->
+    <servlet>
+        <servlet-name>ReviewServlet</servlet-name>
+        <servlet-class>com.smarthomes.servlets.ReviewServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReviewServlet</servlet-name>
+        <url-pattern>/api/reviews/*</url-pattern>
+    </servlet-mapping>
+
 
 <!-- <servlet>
     <servlet-name>ImageServlet</servlet-name>
