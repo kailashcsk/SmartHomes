@@ -150,6 +150,43 @@ export const getTicketStatus = async (ticketNumber) => {
     return response.data;
 };
 
+// Get all reviews for a product
+export const getProductReviews = async (productId) => {
+    const response = await api.get(`/reviews?productId=${productId}`);
+    return response.data;
+};
+
+// Get user's reviews for a product
+export const getUserProductReviews = async (userId, productId) => {
+    const response = await api.get(`/reviews?userId=${userId}&productId=${productId}`);
+    return response.data;
+};
+
+// Add a new review
+export const addReview = async (reviewData) => {
+    const response = await api.post('/reviews', reviewData);
+    return response.data;
+};
+
+// Update a review
+export const updateReview = async (reviewData) => {
+    const response = await api.put('/reviews', reviewData);
+    return response.data;
+};
+
+// Delete a review
+export const deleteReview = async (reviewId) => {
+    const response = await api.delete(`/reviews?reviewId=${reviewId}`);
+    return response.data;
+};
+
+
+// Add this to api.js
+export const getAllStores = async () => {
+    const response = await api.get('/stores');
+    return response.data;
+};
+
 // Add an interceptor to include the token in all requests
 api.interceptors.request.use(
     (config) => {

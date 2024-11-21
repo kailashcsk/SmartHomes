@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProductDetails, getProductDiscounts, getProductWarranty, getProductAccessories, getCategoryById } from '../services/api';
 import { useCart } from '../contexts/CartContext';
+import ReviewSection from '../components/common/ReviewSection';
 
 function ProductDetails() {
     const { id } = useParams();
@@ -247,13 +248,9 @@ function ProductDetails() {
                 >
                     Add to Cart
                 </button>
-                <button
-                    onClick={() => navigate(`/reviews/${product.id}`)}
-                    className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition duration-300"
-                >
-                    Reviews
-                </button>
+                
             </div>
+            <ReviewSection productId={id} />
         </div>
     );
 }

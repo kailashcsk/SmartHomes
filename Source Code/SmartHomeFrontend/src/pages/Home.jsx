@@ -139,6 +139,20 @@ function Home() {
         <div className="container mx-auto px-4 py-8">
             <div className="mb-8">
                 <SearchBar />  {/* Add the SearchBar component here */}
+                
+            
+            <div className="mt-4">
+                <button
+                    onClick={() => navigate('/advanced-search')}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center gap-2"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
+                    </svg>
+                    Advanced Search
+                </button>
+            </div>
+
             </div>
             <div className="mb-8">
                 <div className="flex flex-wrap gap-2">

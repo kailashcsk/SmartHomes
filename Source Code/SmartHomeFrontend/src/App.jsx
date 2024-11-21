@@ -18,6 +18,7 @@ import StoreManagerDashboard from './pages/StoreManagerDashboard';
 import { getCurrentUser } from './services/api';
 import { CartProvider } from './contexts/CartContext';
 import CustomerService from './pages/CustomerService';
+import AdvancedSearch from './pages/AdvancedSearch';
 
 function PrivateRoute({ children, allowedRoles }) {
   const currentUser = getCurrentUser();
@@ -77,6 +78,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <CustomerService />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/advanced-search"
+                element={
+                  <PrivateRoute>
+                    <AdvancedSearch />
                   </PrivateRoute>
                 }
               />

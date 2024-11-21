@@ -123,25 +123,102 @@ Response Format for Ticket:
 
 
 
-# Review API Endpoints --DONE (MONGODB Implementation)
-1. Create a Review
+# Review API Endpoints --DONE 
+1. Get All Reviews
+   - Method: GET
+   - Endpoint: /api/reviews
+   - Response: Array of all reviews
+
+2. Get Reviews by Product
+   - Method: GET
+   - Endpoint: /api/reviews?productId={productId}
+   - Parameters: productId (integer)
+   - Response: Array of reviews for that product
+
+3. Get Reviews by User
+   - Method: GET
+   - Endpoint: /api/reviews?userId={userId}
+   - Parameters: userId (integer)
+   - Response: Array of reviews by that user
+
+4. Get Reviews by User and Product
+   - Method: GET
+   - Endpoint: /api/reviews?userId={userId}&productId={productId}
+   - Parameters: userId (integer), productId (integer)
+   - Response: Array of reviews by that user for that product
+
+5. Create Review
    - Method: POST
-   - Path: `/api/reviews`
+   - Endpoint: /api/reviews
+   - Headers: 
+     - Content-Type: application/json
+     - Authorization: Bearer {jwt_token}
+   - Body:
+   ```json
+   {
+       "productId": 1,
+       "storeId": 1,
+       "reviewText": "Review content here",
+       "rating": 5
+   }
+   ```
+   - Response: Created review object
 
-2. Get All Reviews
-   - Method: GET
-   - Path: `/api/reviews`
-
-3. Get a Specific Review
-   - Method: GET
-   - Path: `/api/reviews/{reviewId}`
-
-4. Update a Review
+6. Update Review
    - Method: PUT
-   - Path: `/api/reviews/{reviewId}?userId={userId}`
-   - Query Parameter: `userId`
+   - Endpoint: /api/reviews
+   - Headers:
+     - Content-Type: application/json
+     - Authorization: Bearer {jwt_token}
+   - Body:
+   ```json
+   {
+       "id": 1,
+       "productId": 1,
+       "storeId": 1,
+       "reviewText": "Updated review content",
+       "rating": 4
+   }
+   ```
+   - Response: Updated review object
 
-5. Delete a Review
+7. Delete Review
    - Method: DELETE
-   - Path: `/api/reviews/{reviewId}?userId={userId}`
-   - Query Parameter: `userId`
+   - Endpoint: /api/reviews?reviewId={reviewId}
+   - Headers:
+     - Authorization: Bearer {jwt_token}
+   - Parameters: reviewId (integer)
+   - Response: Success message
+
+Example Success Responses:
+```json
+// GET responses (array of reviews)
+[
+    {
+        "id": 1,
+        "productId": 1,
+        "userId": 1,
+        "storeId": 1,
+        "reviewText": "Review content",
+        "rating": 5,
+        "reviewDate": "2024-03-20T10:30:00",
+        "lastModified": "2024-03-20T10:30:00",
+        "userName": "John Doe"
+    }
+]
+
+// POST/PUT response (single review)
+{
+    "id": 1,
+    "productId": 1,
+    "userId": 1,
+    "storeId": 1,
+    "reviewText": "Review content",
+    "rating": 5,
+    "reviewDate": "2024-03-20T10:30:00",
+    "lastModified": "2024-03-20T10:30:00",
+    "userName": "John Doe"
+}
+
+// DELETE response
+"Review deleted successfully"
