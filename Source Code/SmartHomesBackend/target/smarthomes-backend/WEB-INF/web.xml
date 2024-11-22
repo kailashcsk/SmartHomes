@@ -235,6 +235,15 @@
         <url-pattern>/api/reviews/*</url-pattern>
     </servlet-mapping>
 
+   <servlet>
+    <servlet-name>SemanticSearchServlet</servlet-name>
+    <servlet-class>com.smarthomes.servlets.SemanticSearchServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>SemanticSearchServlet</servlet-name>
+    <url-pattern>/api/search/*</url-pattern>
+</servlet-mapping>
+
 
 <!-- <servlet>
     <servlet-name>ImageServlet</servlet-name>

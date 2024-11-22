@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getCurrentUser, getProductReviews, addReview, updateReview, deleteReview, getAllStores } from '../../services/api';
 
-function ReviewSection({ productId }) {
+function ReviewSection({ productId, highlightedReviewId, highlightRef }) {
     const [reviews, setReviews] = useState([]);
     const [stores, setStores] = useState([]);
     const [newReview, setNewReview] = useState({

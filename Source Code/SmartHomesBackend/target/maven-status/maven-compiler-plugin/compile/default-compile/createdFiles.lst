@@ -4,6 +4,7 @@ com/smarthomes/dao/OrderDAO.class
 com/smarthomes/models/Review.class
 com/smarthomes/dto/SalesReportDTO$ProductSalesSummary.class
 com/smarthomes/servlets/ProductReviewServlet.class
+com/smarthomes/servlets/SemanticSearchServlet.class
 com/smarthomes/dto/InventoryReportDTO.class
 com/smarthomes/util/FileUploadUtil.class
 com/smarthomes/models/Address.class
@@ -14,6 +15,7 @@ com/smarthomes/dao/CategoryDAO.class
 com/smarthomes/models/Store.class
 com/smarthomes/dao/AnalyticsDAO.class
 com/smarthomes/models/Product.class
+com/smarthomes/dao/EmbeddingDAO.class
 com/smarthomes/dao/TicketDAO.class
 com/smarthomes/servlets/UserManagementServlet.class
 com/smarthomes/servlets/OrderServlet.class
@@ -24,7 +26,9 @@ com/smarthomes/models/Ticket.class
 com/smarthomes/models/Order$OrderItem.class
 com/smarthomes/filters/JwtFilter.class
 com/smarthomes/filters/CorsFilter.class
+com/smarthomes/util/EmbeddingSync.class
 com/smarthomes/models/User.class
+com/smarthomes/util/DataSetup.class
 com/smarthomes/servlets/SalesmanOrderServlet.class
 com/smarthomes/servlets/StoreServlet.class
 com/smarthomes/util/DatabaseConnection.class
@@ -45,11 +49,13 @@ com/smarthomes/dao/ProductDAO.class
 com/smarthomes/dao/StoreDAO.class
 com/smarthomes/servlets/AddressServlet.class
 com/smarthomes/servlets/AccessoryServlet.class
+com/smarthomes/util/SmartHomeDataGenerator.class
 com/smarthomes/dao/UserDAO.class
 com/smarthomes/dao/SalesReportDAO.class
 com/smarthomes/util/JwtUtil.class
 com/smarthomes/listeners/ApplicationListener.class
 com/smarthomes/dao/DiscountDAO.class
+com/smarthomes/test/TestSemanticSearch.class
 com/smarthomes/listeners/ProductCatalogLoader.class
 com/smarthomes/util/ConfigUtil.class
 com/smarthomes/servlets/SalesReportServlet.class
@@ -67,10 +73,15 @@ com/smarthomes/servlets/WarrantyServlet.class
 com/smarthomes/dao/InventoryReportDAO.class
 com/smarthomes/servlets/ReviewServlet.class
 com/smarthomes/util/AjaxUtility.class
+com/smarthomes/util/ElasticsearchUtil.class
+com/smarthomes/util/SmartHomeDataGenerator$CategoryInfo.class
 com/smarthomes/servlets/DiscountServlet.class
 com/smarthomes/services/OpenAIService.class
 com/smarthomes/servlets/LoginServlet.class
+com/smarthomes/util/OpenAIUtil.class
 com/smarthomes/models/Category.class
+com/smarthomes/models/Embedding.class
 com/smarthomes/dto/SalesReportDTO$DailySalesTransaction.class
+com/smarthomes/util/DataMigration.class
 com/smarthomes/servlets/CategoryServlet.class
 com/smarthomes/models/Order.class

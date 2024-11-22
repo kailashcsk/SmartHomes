@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.smarthomes.util.EmbeddingSync;
 
 public class ReviewServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(ReviewServlet.class.getName());
@@ -94,6 +95,10 @@ public class ReviewServlet extends HttpServlet {
             boolean success = reviewDAO.createReview(review);
 
             if (success) {
+                // Sync with Elasticsearch
+                EmbeddingSync.syncReview(review);
+                LOGGER.info("Synced review with Elasticsearch: " + review.getId());
+
                 // Fetch the created review
                 List<Review> createdReview = reviewDAO.getReviewsByUserAndProduct(user.getId(), review.getProductId());
                 if (!createdReview.isEmpty()) {
@@ -145,6 +150,11 @@ public class ReviewServlet extends HttpServlet {
 
             boolean success = reviewDAO.updateReview(review);
             if (success) {
+
+                // Sync with Elasticsearch
+                EmbeddingSync.syncReview(review);
+                LOGGER.info("Synced updated review with Elasticsearch: " + review.getId());
+
                 Review updatedReview = reviewDAO.getReviewById(review.getId());
                 if (updatedReview != null) {
                     sendSuccessResponse(response, HttpServletResponse.SC_OK, "Review updated successfully",
@@ -182,6 +192,10 @@ public class ReviewServlet extends HttpServlet {
             }
 
             reviewDAO.deleteReview(reviewId, user.getId());
+            // Delete from Elasticsearch
+            EmbeddingSync.deleteReview(reviewId);
+            LOGGER.info("Deleted review from Elasticsearch: " + reviewId);
+
             sendSuccessResponse(response, HttpServletResponse.SC_OK, "Review deleted successfully", null);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error deleting review: " + e.getMessage(), e);

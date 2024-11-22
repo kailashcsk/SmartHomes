@@ -1,156 +1,307 @@
-# SmartHomes E-commerce Platform - Assignment 4
+# System Architecture
 
-Github Link: [Your Github Link]
 
-This README provides instructions for setting up and running the SmartHomes e-commerce platform, focusing on the new Customer Service feature implemented in Assignment 4.
+# Smart Home Product Search and Recommendation System
 
-## Prerequisites
+## Overview
+This project implements a semantic search and recommendation system for smart home products using OpenAI embeddings, Elasticsearch, and MySQL. It features natural language search for product reviews and semantic-based product recommendations.
 
-- Java Development Kit (JDK) 8 or higher
-- Apache Maven
-- Apache Tomcat 9
-- Node.js and npm
-- MySQL Database
-- OpenAI API Key
+## Architecture
+The system follows a multi-tier architecture:
+1. Frontend (React + Tailwind CSS)
+2. Backend (Java Servlets)
+3. Data Storage (MySQL + Elasticsearch)
+4. External Services (OpenAI API)
 
-## Backend Setup
+```mermaid
+graph TD
+    subgraph Frontend [Frontend - React]
+        UI[User Interface]
+        SR[Search Reviews Component]
+        PR[Product Recommendations Component]
+        PD[Product Details Component]
+    end
 
-1. Clone the repository to your local machine.
+    subgraph Backend [Backend - Java Servlets]
+        API[API Layer]
+        SS[Semantic Search Service]
+        ES[Embedding Service]
+        PS[Product Service]
+        RS[Review Service]
+    end
 
-2. Set up OpenAI API Key:
-   ```bash
-   export OPENAI_API_KEY=your_api_key_here
-   ```
+    subgraph External [External Services]
+        OPENAI[OpenAI API]
+    end
 
-3. Navigate to the backend project directory.
+    subgraph Storage [Data Storage]
+        MySQL[(MySQL Database)]
+        ES_DB[(Elasticsearch)]
+    end
 
-4. Build the project using Maven:
-   ```bash
-   mvn clean package
-   ```
-
-5. Deploy the WAR file to Tomcat:
-   ```bash
-   rm ~/Desktop/tomcat/webapps/smarthomes-backend.war
-   cp target/smarthomes-backend.war ~/Desktop/tomcat/webapps/
-   ```
-
-6. Create upload directory for images:
-   ```bash
-   mkdir -p $CATALINA_HOME/webapps/smarthomes-backend/customer_service_images
-   chmod 755 $CATALINA_HOME/webapps/smarthomes-backend/customer_service_images
-   ```
-
-7. Start/Restart Tomcat:
-   ```bash
-   $CATALINA_HOME/bin/shutdown.sh
-   $CATALINA_HOME/bin/startup.sh
-   ```
-
-## Frontend Setup
-
-1. Navigate to the frontend project directory.
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-## Customer Service Feature Implementation
-
-### New Features Added:
-1. Customer Service Button in Navigation
-2. Ticket Creation for Delivered Orders
-3. Image Upload Capability
-4. OpenAI Integration for Decision Making
-5. Ticket Status Tracking
-6. Comprehensive Ticket Management
-
-### Implementation Details:
-
-#### Backend Components:
-- `CustomerServiceServlet.java`: Handles ticket creation and management
-- `OpenAIService.java`: Integrates with OpenAI for image analysis
-- `TicketDAO.java`: Manages ticket data operations
-- `FileUploadUtil.java`: Handles image upload functionality
-
-#### Frontend Components:
-- `CustomerService.jsx`: Main component for customer service interface
-- Image preview functionality
-- AI processing animation
-- Ticket status lookup
-- Comprehensive ticket history
-
-### Database Schema:
-```sql
-CREATE TABLE tickets (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    ticket_number VARCHAR(20) UNIQUE NOT NULL,
-    user_id INT,
-    order_id INT,
-    description TEXT NOT NULL,
-    image_path VARCHAR(255),
-    status ENUM('PENDING', 'IN_REVIEW', 'RESOLVED') DEFAULT 'PENDING',
-    decision ENUM('REFUND_ORDER', 'REPLACE_ORDER', 'ESCALATE_TO_HUMAN') NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (order_id) REFERENCES orders(id)
-);
+    UI --> SR
+    UI --> PR
+    UI --> PD
+    
+    SR --> API
+    PR --> API
+    PD --> API
+    
+    API --> SS
+    API --> PS
+    API --> RS
+    
+    SS --> ES
+    ES --> OPENAI
+    
+    PS --> MySQL
+    RS --> MySQL
+    
+    ES --> ES_DB
+    
+    style Frontend fill:#f9f,stroke:#333,stroke-width:2px
+    style Backend fill:#bbf,stroke:#333,stroke-width:2px
+    style External fill:#ff9,stroke:#333,stroke-width:2px
+    style Storage fill:#bfb,stroke:#333,stroke-width:2px
 ```
 
-## Testing Requirements
+```mermaid
 
-The system includes 6 test cases demonstrating different decision scenarios:
-1. REFUND_ORDER (2 cases)
-   - Complete product damage
-   - Severe shipping damage
-2. REPLACE_ORDER (2 cases)
-   - Minor cosmetic damage
-   - Package damage with intact product
-3. ESCALATE_TO_HUMAN (2 cases)
-   - Unclear technical issues
-   - Special circumstances
+sequenceDiagram
+    participant User
+    participant FE as Frontend
+    participant BE as Backend
+    participant OpenAI
+    participant MySQL
+    participant ES as Elasticsearch
 
-## Important Notes
+    User->>FE: Enter search query
+    FE->>BE: POST /api/search/*
+    BE->>OpenAI: Generate embedding
+    OpenAI-->>BE: Return embedding vector
+    BE->>ES: Search similar vectors
+    ES-->>BE: Return matches
+    BE->>MySQL: Fetch full details
+    MySQL-->>BE: Return data
+    BE-->>FE: Return formatted results
+    FE->>User: Display results
+```
 
-- Only delivered orders are eligible for ticket creation
-- Image uploads are limited to 10MB
-- Supported image formats: JPG, JPEG, PNG
-- OpenAI API key must be configured properly
-- Image storage path must be accessible and writable
+### Key Components:
+- **Frontend**: React-based UI with semantic search and recommendation interfaces
+- **Backend**: Java servlets handling business logic and data coordination
+- **MySQL**: Primary data storage for products, reviews, and user data
+- **Elasticsearch**: Vector database for semantic search using embeddings
+- **OpenAI Integration**: Generates embeddings for semantic search
 
-## Running the Application
+## Setup Instructions
 
-1. Start the backend server using the Tomcat commands provided above.
-2. Start the frontend development server using `npm run dev`.
-3. Access the application through the browser at `http://localhost:5173`.
+### Prerequisites
+- Java 15 or higher
+- Maven
+- MySQL 8.0
+- Elasticsearch 8.12.0
+- Node.js and npm
+- OpenAI API key
+
+### Installation Steps
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+```
+
+2. Backend Setup:
+```bash
+cd backend
+mvn clean install
+```
+
+3. Frontend Setup:
+```bash
+cd frontend
+npm install
+```
+
+4. Database Setup:
+```bash
+# Start MySQL
+mysql -u root -p
+source setup/database.sql
+
+# Start Elasticsearch
+./elasticsearch-8.12.0/bin/elasticsearch
+```
+
+5. Environment Configuration:
+```bash
+# Set OpenAI API key
+export OPENAI_API_KEY=your_key_here
+```
+
+### Data Migration and Generation
+
+1. Generate Initial Data:
+```bash
+# Run the data generator
+java -jar target/smarthomes-backend-jar-with-dependencies.jar com.smarthomes.util.SmartHomeDataGenerator
+```
+
+2. Sync with Elasticsearch:
+```bash
+# Run the migration tool
+java -jar target/smarthomes-backend-jar-with-dependencies.jar com.smarthomes.util.DataMigration
+```
+
+## System Components
+
+### 1. Data Models
+- Product
+- Review
+- Embedding
+- Category
+- User
+
+### 2. Services
+- SearchService: Handles semantic search operations
+- ProductService: Manages product operations
+- ReviewService: Manages review operations
+- EmbeddingService: Handles embedding generation and storage
+
+### 3. Database Schema
+```sql
+-- Key tables
+products
+reviews
+product_embeddings
+review_embeddings
+```
+
+### 4. API Endpoints
+- POST /api/search/reviews
+- POST /api/search/products
+- GET /api/products/:id
+- GET /api/reviews/:id
+
+## Data Flow
+
+### Review Search Flow:
+1. User enters search query
+2. Frontend sends query to backend
+3. Backend generates embedding via OpenAI
+4. Elasticsearch performs similarity search
+5. Backend fetches full details from MySQL
+6. Results returned to frontend
+
+### Product Recommendation Flow:
+1. User describes desired product
+2. System generates embedding
+3. Matches against product embeddings
+4. Returns ranked recommendations
+
+## Synchronization Mechanism
+
+### MySQL-Elasticsearch Sync:
+1. Products/Reviews created in MySQL
+2. Embeddings generated via OpenAI
+3. Embeddings stored in Elasticsearch
+4. References maintained via IDs
+
+### Data Generation Process:
+1. Generate product data
+2. Generate review data
+3. Generate embeddings
+4. Store in both databases
+
+## File Structure
+```
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── smarthomes/
+│   │   │           ├── models/
+│   │   │           ├── dao/
+│   │   │           ├── servlets/
+│   │   │           └── util/
+│   │   └── resources/
+│   └── test/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── services/
+│   └── public/
+└── scripts/
+```
+
+## Testing
+
+### Unit Tests:
+```bash
+mvn test
+```
+
+### Integration Tests:
+```bash
+mvn verify
+```
+
+## Deployment
+
+1. Build WAR file:
+```bash
+mvn clean package
+```
+
+2. Deploy to Tomcat:
+```bash
+cp target/smarthomes-backend.war ~/Desktop/tomcat/webapps/
+$CATALINA_HOME/bin/shutdown.sh
+$CATALINA_HOME/bin/startup.sh
+```
+
+## Monitoring and Maintenance
+
+### Logs:
+- Application logs: `logs/application.log`
+- Elasticsearch logs: `elasticsearch/logs/`
+- MySQL logs: `mysql/logs/`
+
+### Backup:
+1. MySQL backup
+2. Elasticsearch snapshot
+3. OpenAI key rotation
 
 ## Troubleshooting
 
-- If image upload fails, check directory permissions
-- For OpenAI integration issues, verify API key configuration
-- If ticket creation fails, ensure the order is in 'DELIVERED' status
-- For image display issues, verify the file paths in the web server
+Common Issues:
+1. Elasticsearch connection issues
+2. OpenAI API rate limits
+3. MySQL connection pool exhaustion
+4. Embedding generation failures
 
-## Testing the Customer Service Feature
+## Performance Considerations
 
-1. Login as a customer
-2. Place and complete an order (status: DELIVERED)
-3. Navigate to Customer Service
-4. Create tickets using different test scenarios
-5. Verify AI decisions
-6. Check ticket status and history
+1. Elasticsearch Optimization:
+   - Index settings
+   - Query optimization
+   - Bulk operations
 
-## Additional Information
+2. MySQL Optimization:
+   - Proper indexing
+   - Connection pooling
+   - Query optimization
 
-- Image analysis uses OpenAI's gpt-4o-mini model
-- Ticket numbers follow format: CST-YYYYMMDD-XXXXX
-- All customer service features require authentication
-- The system maintains a complete history of all tickets
+## Security Considerations
+
+1. API Security:
+   - JWT authentication
+   - Rate limiting
+   - Input validation
+
+2. Data Security:
+   - Encryption at rest
+   - Secure communication
+   - Access control
 

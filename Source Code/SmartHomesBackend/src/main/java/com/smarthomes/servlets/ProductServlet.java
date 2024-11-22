@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.smarthomes.util.EmbeddingSync;
 
 //@WebServlet("/api/products/*")
 public class ProductServlet extends HttpServlet {
@@ -108,6 +109,11 @@ public class ProductServlet extends HttpServlet {
             LOGGER.info("Attempting to create product: " + product.getName());
             productDAO.createProduct(product);
             LOGGER.info("Product created successfully: " + product.getId());
+
+            // Sync with Elasticsearch
+            EmbeddingSync.syncProduct(product);
+            LOGGER.info("Synced product with Elasticsearch: " + product.getId());
+
             // Add the new product to the HashMap
             AjaxUtility.addOrUpdateProductInMap(product);
             sendJsonResponse(response, HttpServletResponse.SC_CREATED, product);
@@ -141,6 +147,12 @@ public class ProductServlet extends HttpServlet {
             Product product = objectMapper.readValue(request.getReader(), Product.class);
             product.setId(productId);
             productDAO.updateProduct(product);
+
+            // Sync with Elasticsearch
+            EmbeddingSync.syncProduct(product);
+            LOGGER.info("Synced updated product with Elasticsearch: " + product.getId());
+
+
             // Update the product in the HashMap
             AjaxUtility.addOrUpdateProductInMap(product);
             sendJsonResponse(response, HttpServletResponse.SC_OK, product);
@@ -166,6 +178,11 @@ public class ProductServlet extends HttpServlet {
         try {
             int productId = Integer.parseInt(pathInfo.substring(1));
             productDAO.deleteProduct(productId);
+
+            // Delete from Elasticsearch
+            EmbeddingSync.deleteProduct(productId);
+            LOGGER.info("Deleted product from Elasticsearch: " + productId);
+            
             // Remove the product from the HashMap
             AjaxUtility.removeProductFromMap(productId);
             sendJsonResponse(response, HttpServletResponse.SC_OK, "Product deleted successfully");

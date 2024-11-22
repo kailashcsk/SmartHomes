@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 const AdvancedSearch = () => {
     const [activeTab, setActiveTab] = useState('reviews');
@@ -8,45 +9,95 @@ const AdvancedSearch = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [recommendation, setRecommendation] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const handleReviewSearch = async () => {
         setLoading(true);
+        setError(null);
         try {
-            // Implementation: Call your backend API to search reviews
-            const response = await fetch('/api/search-reviews', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: reviewQuery })
+            const response = await api.post('/search/reviews', {
+                query: reviewQuery
             });
-            const data = await response.json();
-            setSearchResults(data.results);
+            const data = response.data;
+
+            // Fetch product details for each review
+            const reviewsWithProducts = await Promise.all(
+                data.map(async (result) => {
+                    try {
+                        const productResponse = await api.get(`/products/${result.review.productId}`);
+                        return {
+                            id: result.review.id,
+                            productId: result.review.productId,
+                            productName: productResponse.data.name,
+                            text: result.review.reviewText,
+                            rating: result.review.rating,
+                            similarity: result.similarity,
+                            userName: result.review.userName
+                        };
+                    } catch (error) {
+                        console.error('Error fetching product details:', error);
+                        return {
+                            id: result.review.id,
+                            productId: result.review.productId,
+                            productName: 'Product Name Not Found',
+                            text: result.review.reviewText,
+                            rating: result.review.rating,
+                            similarity: result.similarity
+                        };
+                    }
+                })
+            );
+            setSearchResults(reviewsWithProducts);
         } catch (error) {
             console.error('Error searching reviews:', error);
+            setError(error.response?.data?.error || 'An error occurred while searching reviews');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const handleProductRecommendation = async () => {
         setLoading(true);
+        setError(null);
         try {
-            // Implementation: Call your backend API to get product recommendations
-            const response = await fetch('/api/recommend-product', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ query: productQuery })
+            const response = await api.post('/search/products', {
+                query: productQuery
             });
-            const data = await response.json();
-            setRecommendation(data.recommendation);
+            const data = response.data;
+
+            if (data && data.length > 0) {
+                // Sort by similarity score
+                const sortedResults = data.sort((a, b) => b.similarity - a.similarity);
+
+                // Map and set all recommendations
+                const recommendations = sortedResults.map(result => ({
+                    id: result.product.id,
+                    name: result.product.name,
+                    description: result.product.description,
+                    price: result.product.price,
+                    similarity: result.similarity
+                }));
+
+                setRecommendation(recommendations);
+            }
         } catch (error) {
             console.error('Error getting recommendation:', error);
+            setError(error.response?.data?.error || 'An error occurred while getting recommendations');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-3xl font-bold mb-6">Advanced Search</h1>
+
+            {error && (
+                <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                    {error}
+                </div>
+            )}
 
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 {/* Tabs */}
@@ -106,11 +157,35 @@ const AdvancedSearch = () => {
                                     <h3 className="font-medium text-lg">Search Results:</h3>
                                     <div className="space-y-4">
                                         {searchResults.map((review, index) => (
-                                            <div key={index} className="bg-gray-50 border rounded-lg p-4">
-                                                <h4 className="font-medium text-lg">{review.productName}</h4>
+                                            <div
+                                                key={index}
+                                                className="bg-gray-50 border rounded-lg p-4 cursor-pointer hover:bg-gray-100 transition-colors"
+                                                onClick={() => navigate(`/products/${review.productId}`, {
+                                                    state: { highlightReviewId: review.id }
+                                                })}
+                                            >
+                                                <div className="flex justify-between items-start">
+                                                    <h4 className="font-medium text-lg text-blue-600">{review.userName}</h4>
+                                                    <span className="text-sm text-blue-600">
+                                                        Match: {(review.similarity * 100).toFixed(1)}%
+                                                    </span>
+                                                </div>
                                                 <p className="text-gray-600 mt-2">{review.text}</p>
-                                                <div className="mt-2 text-sm text-gray-500">
-                                                    Rating: {review.rating} ⭐
+                                                <div className="mt-2 flex justify-between items-center">
+                                                    <span className="text-sm text-gray-500">
+                                                        Rating: {review.rating} {'⭐'.repeat(review.rating)}
+                                                    </span>
+                                                    <button
+                                                        className="text-sm text-blue-600 hover:underline"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate(`/products/${review.productId}`, {
+                                                                state: { highlightReviewId: review.id }
+                                                            });
+                                                        }}
+                                                    >
+                                                        View Product →
+                                                    </button>
                                                 </div>
                                             </div>
                                         ))}
@@ -150,23 +225,41 @@ const AdvancedSearch = () => {
 
                             {/* Recommendation Results */}
                             {recommendation && (
-                                <div className="mt-6">
-                                    <h3 className="font-medium text-lg mb-4">Recommended Product:</h3>
-                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                                        <h4 className="text-xl font-semibold">{recommendation.name}</h4>
-                                        <p className="text-gray-600 mt-2">{recommendation.description}</p>
-                                        <div className="flex justify-between items-center mt-4">
-                                            <span className="font-medium text-lg">
-                                                ${recommendation.price}
-                                            </span>
-                                            <button
-                                                onClick={() => navigate(`/products/${recommendation.id}`)}
-                                                className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50"
-                                            >
-                                                View Product
-                                            </button>
+                                <div className="mt-6 space-y-4">
+                                    <h3 className="font-medium text-lg mb-4">Recommended Products:</h3>
+                                    {recommendation.map((product, index) => (
+                                        <div
+                                            key={product.id}
+                                            className={`bg-blue-50 border border-blue-200 rounded-lg p-6 ${index === 0 ? 'ring-2 ring-blue-500' : ''
+                                                }`}
+                                        >
+                                            <div className="flex justify-between items-start">
+                                                <h4 className="text-xl font-semibold">
+                                                    {product.name}
+                                                    {index === 0 && (
+                                                        <span className="ml-2 text-sm bg-blue-600 text-white px-2 py-1 rounded">
+                                                            Best Match
+                                                        </span>
+                                                    )}
+                                                </h4>
+                                                <span className="text-sm text-blue-600">
+                                                    Match: {(product.similarity * 100).toFixed(1)}%
+                                                </span>
+                                            </div>
+                                            <p className="text-gray-600 mt-2">{product.description}</p>
+                                            <div className="flex justify-between items-center mt-4">
+                                                <span className="font-medium text-lg">
+                                                    ${product.price}
+                                                </span>
+                                                <button
+                                                    onClick={() => navigate(`/products/${product.id}`)}
+                                                    className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50"
+                                                >
+                                                    View Product
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    ))}
                                 </div>
                             )}
                         </div>

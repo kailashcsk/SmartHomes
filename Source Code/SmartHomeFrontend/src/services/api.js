@@ -187,6 +187,16 @@ export const getAllStores = async () => {
     return response.data;
 };
 
+export const searchReviews = async (query) => {
+    const response = await api.post('/search/reviews', { query });
+    return response.data;
+};
+
+export const searchProducts = async (query) => {
+    const response = await api.post('/search/products', { query });
+    return response.data;
+};
+
 // Add an interceptor to include the token in all requests
 api.interceptors.request.use(
     (config) => {
